@@ -13,7 +13,7 @@
 [PASS] status quo is Alt 3: Alt 3 always has ASC = 0
 [PASS] xlsx matches dta: all 19 shared columns identical after merging on record_iidd
 Wrote outputs/data_checks.csv
------ code/01_check_data.R finished in 0.7 s
+----- code/01_check_data.R finished in 0.4 s
 
 ===== code/02_table2_descriptives.R =====
                  group                               variable   n    mean sd_sample sd_population paper_mean paper_sd
@@ -44,79 +44,182 @@ Means matching the paper to 2 decimals: 10 of 10
 
 ===== code/03_mixed_logit_tables3_4.R =====
 Fixed-coefficient logit log-likelihood: -4632.831 
-Model 1 log-likelihood: -3124.718 
-Model 2 log-likelihood: -3119.198 
+Model 1 log-likelihood: -3126.406 
+Model 2 log-likelihood: -3119.212 
+
+Call:
+mlogit(formula = choice ~ fish_catch + coral_coverage + coastal_conditions + 
+    contribution + ASC | -1, data = md, start = c(b0, abs(b0)/2), 
+    rpar = rpar1, R = n_draws, halton = NA, panel = TRUE)
+
+Frequencies of alternatives:choice
+      1       2       3 
+0.36489 0.45044 0.18467 
+
+bfgs method
+34 iterations, 0h:1m:12s 
+g'(-H)^-1g = 9.49E-07 
+gradient close to zero 
+
+Coefficients :
+                         Estimate  Std. Error  z-value  Pr(>|z|)    
+fish_catch             0.00659382  0.00263226   2.5050  0.012245 *  
+coral_coverage         0.03592746  0.00291950  12.3060 < 2.2e-16 ***
+coastal_conditions     0.00926521  0.00261968   3.5368  0.000405 ***
+contribution          -0.00559622  0.00029165 -19.1880 < 2.2e-16 ***
+ASC                    7.61372942  0.51391731  14.8151 < 2.2e-16 ***
+sd.fish_catch         -0.02814375  0.00571988  -4.9203 8.639e-07 ***
+sd.coral_coverage      0.04534538  0.00512953   8.8401 < 2.2e-16 ***
+sd.coastal_conditions  0.03919615  0.00481680   8.1374 4.441e-16 ***
+sd.contribution        0.00513667  0.00030410  16.8912 < 2.2e-16 ***
+sd.ASC                 8.78808490  0.57585079  15.2610 < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Log-Likelihood: -3126.4
+
+random coefficients
+                   Min.      1st Qu.       Median         Mean      3rd Qu. Max.
+fish_catch         -Inf -0.012388846  0.006593825  0.006593825  0.025576495  Inf
+coral_coverage     -Inf  0.005342460  0.035927457  0.035927457  0.066512453  Inf
+coastal_conditions -Inf -0.017172192  0.009265208  0.009265208  0.035702608  Inf
+contribution       -Inf -0.009060853 -0.005596223 -0.005596223 -0.002131593  Inf
+ASC                -Inf  1.686256224  7.613729415  7.613729415 13.541202607  Inf
+
+Call:
+mlogit(formula = choice ~ fish_catch + coral_coverage + coastal_conditions + 
+    contribution + ASC + fish_catch_comm + coral_coverage_comm + 
+    coastal_conditions_comm + contribution_comm + ASC_comm | 
+    -1, data = md, start = c(b1[1:5], rep(0, 5), sds1, sds1/2), 
+    rpar = rpar2, R = n_draws, halton = NA, panel = TRUE)
+
+Frequencies of alternatives:choice
+      1       2       3 
+0.36489 0.45044 0.18467 
+
+bfgs method
+24 iterations, 0h:1m:6s 
+g'(-H)^-1g = 9.06E-07 
+gradient close to zero 
+
+Coefficients :
+                              Estimate  Std. Error  z-value  Pr(>|z|)    
+fish_catch                  0.00315246  0.00359051   0.8780 0.3799443    
+coral_coverage              0.03003187  0.00368931   8.1402 4.441e-16 ***
+coastal_conditions          0.00533681  0.00346316   1.5410 0.1233112    
+contribution               -0.00536909  0.00032044 -16.7556 < 2.2e-16 ***
+ASC                         7.54737511  0.54525313  13.8420 < 2.2e-16 ***
+fish_catch_comm             0.00836382  0.00533501   1.5677 0.1169458    
+coral_coverage_comm         0.01378959  0.00565611   2.4380 0.0147688 *  
+coastal_conditions_comm     0.00928776  0.00535786   1.7335 0.0830099 .  
+contribution_comm          -0.00040654  0.00035659  -1.1401 0.2542572    
+ASC_comm                    0.97862534  0.42717225   2.2909 0.0219670 *  
+sd.fish_catch               0.02301784  0.00712070   3.2325 0.0012270 ** 
+sd.coral_coverage           0.03915784  0.00624752   6.2677 3.663e-10 ***
+sd.coastal_conditions       0.03233295  0.00584484   5.5319 3.168e-08 ***
+sd.contribution             0.00490460  0.00033387  14.6900 < 2.2e-16 ***
+sd.ASC                      8.38725051  0.57132822  14.6803 < 2.2e-16 ***
+sd.fish_catch_comm          0.02393815  0.01096035   2.1841 0.0289572 *  
+sd.coral_coverage_comm      0.04158575  0.01011725   4.1104 3.950e-05 ***
+sd.coastal_conditions_comm  0.03664308  0.00827437   4.4285 9.489e-06 ***
+sd.contribution_comm        0.00237595  0.00070607   3.3651 0.0007653 ***
+sd.ASC_comm                 2.16121713  0.76893533   2.8107 0.0049440 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Log-Likelihood: -3119.2
+
+random coefficients
+                        Min.      1st Qu.        Median          Mean      3rd Qu. Max.
+fish_catch              -Inf -0.012372834  0.0031524649  0.0031524649  0.018677764  Inf
+coral_coverage          -Inf  0.003620311  0.0300318710  0.0300318710  0.056443432  Inf
+coastal_conditions      -Inf -0.016471435  0.0053368105  0.0053368105  0.027145056  Inf
+contribution            -Inf -0.008677193 -0.0053690913 -0.0053690913 -0.002060990  Inf
+ASC                     -Inf  1.890260605  7.5473751063  7.5473751063 13.204489608  Inf
+fish_catch_comm         -Inf -0.007782216  0.0083638186  0.0083638186  0.024509853  Inf
+coral_coverage_comm     -Inf -0.014259578  0.0137895851  0.0137895851  0.041838748  Inf
+coastal_conditions_comm -Inf -0.015427624  0.0092877581  0.0092877581  0.034003140  Inf
+contribution_comm       -Inf -0.002009093 -0.0004065375 -0.0004065375  0.001196018  Inf
+ASC_comm                -Inf -0.479093460  0.9786253413  0.9786253413  2.436344143  Inf
    model                       term estimate std_err        z p_value sig paper_estimate paper_sig
- Model 1                 fish_catch   0.0067  0.0029   2.3380  0.0194  **         0.0069        **
- Model 1             coral_coverage   0.0367  0.0034  10.7582  0.0000 ***         0.0360       ***
- Model 1         coastal_conditions   0.0091  0.0030   3.0707  0.0021 ***         0.0096       ***
- Model 1               contribution  -0.0056  0.0003 -16.6488  0.0000 ***        -0.0055       ***
- Model 1                        ASC   7.8516  0.6174  12.7169  0.0000 ***         8.2200       ***
- Model 1              sd.fish_catch   0.0311  0.0054   5.8091  0.0000 ***             NA      <NA>
- Model 1          sd.coral_coverage   0.0468  0.0050   9.4123  0.0000 ***             NA      <NA>
- Model 1      sd.coastal_conditions   0.0401  0.0045   8.8645  0.0000 ***             NA      <NA>
- Model 1            sd.contribution   0.0053  0.0003  16.6052  0.0000 ***             NA      <NA>
- Model 1                     sd.ASC   8.7701  0.6761  12.9719  0.0000 ***             NA      <NA>
- Model 2                 fish_catch   0.0033  0.0038   0.8858  0.3757             0.0035          
- Model 2             coral_coverage   0.0307  0.0044   6.9418  0.0000 ***         0.0299       ***
- Model 2         coastal_conditions   0.0053  0.0039   1.3630  0.1729             0.0050          
- Model 2               contribution  -0.0055  0.0004 -13.3547  0.0000 ***        -0.0052       ***
- Model 2                        ASC   7.8490  0.7537  10.4135  0.0000 ***         8.4610       ***
- Model 2            fish_catch_comm   0.0066  0.0057   1.1531  0.2489             0.0076          
- Model 2        coral_coverage_comm   0.0118  0.0066   1.7909  0.0733   *         0.0168        **
- Model 2    coastal_conditions_comm   0.0083  0.0059   1.3897  0.1646             0.0105         *
- Model 2          contribution_comm  -0.0001  0.0005  -0.2715  0.7860            -0.0011        **
- Model 2                   ASC_comm  -0.1674  0.7721  -0.2168  0.8284             0.2250          
- Model 2              sd.fish_catch   0.0209  0.0096   2.1860  0.0288  **             NA      <NA>
- Model 2          sd.coral_coverage   0.0427  0.0060   7.1225  0.0000 ***             NA      <NA>
- Model 2      sd.coastal_conditions   0.0335  0.0061   5.5002  0.0000 ***             NA      <NA>
- Model 2            sd.contribution   0.0051  0.0003  16.1038  0.0000 ***             NA      <NA>
- Model 2                     sd.ASC   8.7995  0.6799  12.9426  0.0000 ***             NA      <NA>
- Model 2         sd.fish_catch_comm  -0.0308  0.0116  -2.6563  0.0079 ***             NA      <NA>
- Model 2     sd.coral_coverage_comm  -0.0255  0.0142  -1.8030  0.0714   *             NA      <NA>
- Model 2 sd.coastal_conditions_comm   0.0318  0.0102   3.1057  0.0019 ***             NA      <NA>
- Model 2       sd.contribution_comm   0.0005  0.0010   0.5021  0.6156                 NA      <NA>
- Model 2                sd.ASC_comm  -1.2059  0.5190  -2.3233  0.0202  **             NA      <NA>
+ Model 1                 fish_catch   0.0066  0.0026   2.5050  0.0122  **         0.0069        **
+ Model 1             coral_coverage   0.0359  0.0029  12.3060  0.0000 ***         0.0360       ***
+ Model 1         coastal_conditions   0.0093  0.0026   3.5368  0.0004 ***         0.0096       ***
+ Model 1               contribution  -0.0056  0.0003 -19.1880  0.0000 ***        -0.0055       ***
+ Model 1                        ASC   7.6137  0.5139  14.8151  0.0000 ***         8.2200       ***
+ Model 1              sd.fish_catch  -0.0281  0.0057  -4.9203  0.0000 ***             NA      <NA>
+ Model 1          sd.coral_coverage   0.0453  0.0051   8.8401  0.0000 ***             NA      <NA>
+ Model 1      sd.coastal_conditions   0.0392  0.0048   8.1374  0.0000 ***             NA      <NA>
+ Model 1            sd.contribution   0.0051  0.0003  16.8912  0.0000 ***             NA      <NA>
+ Model 1                     sd.ASC   8.7881  0.5759  15.2610  0.0000 ***             NA      <NA>
+ Model 2                 fish_catch   0.0032  0.0036   0.8780  0.3799             0.0035          
+ Model 2             coral_coverage   0.0300  0.0037   8.1402  0.0000 ***         0.0299       ***
+ Model 2         coastal_conditions   0.0053  0.0035   1.5410  0.1233             0.0050          
+ Model 2               contribution  -0.0054  0.0003 -16.7556  0.0000 ***        -0.0052       ***
+ Model 2                        ASC   7.5474  0.5453  13.8420  0.0000 ***         8.4610       ***
+ Model 2            fish_catch_comm   0.0084  0.0053   1.5677  0.1169             0.0076          
+ Model 2        coral_coverage_comm   0.0138  0.0057   2.4380  0.0148  **         0.0168        **
+ Model 2    coastal_conditions_comm   0.0093  0.0054   1.7335  0.0830   *         0.0105         *
+ Model 2          contribution_comm  -0.0004  0.0004  -1.1401  0.2543            -0.0011        **
+ Model 2                   ASC_comm   0.9786  0.4272   2.2909  0.0220  **         0.2250          
+ Model 2              sd.fish_catch   0.0230  0.0071   3.2325  0.0012 ***             NA      <NA>
+ Model 2          sd.coral_coverage   0.0392  0.0062   6.2677  0.0000 ***             NA      <NA>
+ Model 2      sd.coastal_conditions   0.0323  0.0058   5.5319  0.0000 ***             NA      <NA>
+ Model 2            sd.contribution   0.0049  0.0003  14.6900  0.0000 ***             NA      <NA>
+ Model 2                     sd.ASC   8.3873  0.5713  14.6803  0.0000 ***             NA      <NA>
+ Model 2         sd.fish_catch_comm   0.0239  0.0110   2.1841  0.0290  **             NA      <NA>
+ Model 2     sd.coral_coverage_comm   0.0416  0.0101   4.1104  0.0000 ***             NA      <NA>
+ Model 2 sd.coastal_conditions_comm   0.0366  0.0083   4.4285  0.0000 ***             NA      <NA>
+ Model 2       sd.contribution_comm   0.0024  0.0007   3.3651  0.0008 ***             NA      <NA>
+ Model 2                sd.ASC_comm   2.1612  0.7689   2.8107  0.0049 ***             NA      <NA>
             series          attribute  wtp_yen std_err p_value sig paper_wtp paper_se
-  Model 1 (pooled)         fish_catch    1.202   0.518   0.020  **     1.244    0.503
-  Model 2 national         fish_catch    0.602   0.681   0.377         0.677    0.680
- Model 2 community         fish_catch    1.750   0.767   0.023  **     1.754    0.745
-  Model 1 (pooled)     coral_coverage    6.533   0.622   0.000 ***     6.524    0.616
-  Model 2 national     coral_coverage    5.553   0.828   0.000 ***     5.766    0.821
- Model 2 community     coral_coverage    7.497   0.923   0.000 ***     7.383    0.920
-  Model 1 (pooled) coastal_conditions    1.625   0.536   0.002 ***     1.744    0.530
-  Model 2 national coastal_conditions    0.962   0.709   0.175         0.958    0.734
- Model 2 community coastal_conditions    2.394   0.808   0.003 ***     2.447    0.766
-  Model 1 (pooled)                ASC 1399.145 115.431   0.000 ***  1489.000  147.800
-  Model 2 national                ASC 1420.015 154.753   0.000 ***  1631.700  161.800
- Model 2 community                ASC 1354.718 134.379   0.000 ***  1373.800  137.500
------ code/03_mixed_logit_tables3_4.R finished in 402.3 s
+  Model 1 (pooled)         fish_catch    1.178   0.469   0.012  **     1.244    0.503
+  Model 2 national         fish_catch    0.587   0.670   0.381         0.677    0.680
+ Model 2 community         fish_catch    1.994   0.677   0.003 ***     1.754    0.745
+  Model 1 (pooled)     coral_coverage    6.420   0.503   0.000 ***     6.524    0.616
+  Model 2 national     coral_coverage    5.593   0.684   0.000 ***     5.766    0.821
+ Model 2 community     coral_coverage    7.587   0.754   0.000 ***     7.383    0.920
+  Model 1 (pooled) coastal_conditions    1.656   0.473   0.000 ***     1.744    0.530
+  Model 2 national coastal_conditions    0.994   0.647   0.125         0.958    0.734
+ Model 2 community coastal_conditions    2.532   0.713   0.000 ***     2.447    0.766
+  Model 1 (pooled)                ASC 1360.512  64.970   0.000 ***  1489.000  147.800
+  Model 2 national                ASC 1405.708  79.590   0.000 ***  1631.700  161.800
+ Model 2 community                ASC 1476.203  84.619   0.000 ***  1373.800  137.500
+----- code/03_mixed_logit_tables3_4.R finished in 138.8 s
 
 ===== code/04_figure1_wtp.R =====
 Wrote outputs/figure1_wtp.png and outputs/figure1_wtp.pdf
 ----- code/04_figure1_wtp.R finished in 0.1 s
+Warning message:
+package ‘mlogit’ was built under R version 4.5.2 
 
-All steps finished. Total run time: 403.3 s
+All steps finished. Total run time: 139.5 s
 
-R version 4.3.3 (2024-02-29)
-Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Ubuntu 24.04.5 LTS
+R version 4.5.1 (2025-06-13)
+Platform: aarch64-apple-darwin20
+Running under: macOS Tahoe 26.5.2
 
 Matrix products: default
-BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.12.0 
-LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0
+BLAS:   /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
 
 locale:
-[1] C
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
-time zone: Etc/UTC
-tzcode source: system (glibc)
+time zone: America/Los_Angeles
+tzcode source: internal
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
+other attached packages:
+[1] dfidx_0.2-0  mlogit_2.0-0
+
 loaded via a namespace (and not attached):
- [1] utf8_1.2.4       R6_2.5.1         cellranger_1.1.0 readxl_1.4.3     tzdb_0.4.0       magrittr_2.0.3  
- [7] glue_1.7.0       tibble_3.2.1     pkgconfig_2.0.3  lifecycle_1.0.4  readr_2.1.5      cli_3.6.2       
-[13] fansi_1.0.5      vctrs_0.6.5      compiler_4.3.3   forcats_1.0.0    haven_2.5.4      tools_4.3.3     
-[19] hms_1.1.3        pillar_1.9.0     rlang_1.1.3     
+ [1] vctrs_0.6.5         cli_3.6.5           rlang_1.1.6         Formula_1.2-5       forcats_1.0.1      
+ [6] generics_0.1.4      haven_2.5.5         glue_1.8.0          zoo_1.8-14          CompQuadForm_1.4.4 
+[11] lmtest_0.9-40       hms_1.1.4           readxl_1.6.0        grid_4.5.1          cellranger_1.1.0   
+[16] tibble_3.3.0        tzdb_0.5.0          numDeriv_2016.8-1.1 lifecycle_1.0.4     compiler_4.5.1     
+[21] sandwich_3.1-1      Rcpp_1.1.0          pkgconfig_2.0.3     lattice_0.22-7      R6_2.6.1           
+[26] readr_2.1.6         splines_4.5.1       pillar_1.11.1       Rdpack_2.6.4        micsr_0.1-5        
+[31] rbibutils_2.3       magrittr_2.0.4      Matrix_1.7-3        tools_4.5.1         survival_3.8-3     
