@@ -5,7 +5,7 @@
 #
 # Runs the scripts in code/ in order. Each one reads data/raw/ or an earlier
 # output and writes to outputs/. The run stops at the first error.
-# Needs R (4.1 or newer) with the haven and readxl packages.
+# Needs R (4.1 or newer) with the mlogit, dfidx, haven and readxl packages.
 
 steps <- c(
   "code/01_check_data.R",

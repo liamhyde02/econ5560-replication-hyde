@@ -1,14 +1,15 @@
 # Step 3: Models 1 and 2 (Table 3) and willingness to pay (Table 4).
 #
-# Specification, as in the team's mlogit code (Zoey Miles, ReplicationRevised.qmd)
-# and the paper's Eqs. 1-2:
+# Estimated with mlogit, using the team's specification (Zoey Miles,
+# code/ReplicationRevised.qmd in the team repository) and the paper's Eqs. 1-2:
 #   Model 1: fish_catch, coral_coverage, coastal_conditions, contribution (yen),
 #            ASC; all independent normal random parameters.
 #   Model 2: Model 1 plus each term interacted with community = (survey_type == 2),
-#            also normal random parameters.
-#   Panel by respondent, 500 Halton draws, simulated maximum likelihood.
-#   Start values: Model 1 from the fixed-coefficient logit with SDs at half the
-#   absolute coefficient; Model 2 from Model 1 with the interactions at 0.
+#            also independent normal random parameters.
+#   panel = TRUE (draws shared across a respondent's choices), R = 500 Halton draws.
+#   Start values as in the team's code: Model 1 from the fixed-coefficient logit
+#   with SDs at half the absolute coefficient; Model 2 from Model 1's means with
+#   the interactions at 0, Model 1's SDs, and interaction SDs at half of those.
 # Marginal WTP = -b_k / b_pay (the paper's Eq. 3 with its minus sign restored),
 # yen per month per percentage point, delta-method standard errors. For the
 # community group, WTP = -(b_k + g_k) / (b_pay + g_pay).
@@ -16,26 +17,45 @@
 # Writes outputs/table3_coefficients.csv, outputs/table4_wtp.csv and
 # outputs/model_summary.csv.
 
-source("code/mixed_logit_functions.R")
+suppressPackageStartupMessages({
+  library(mlogit)
+  library(dfidx)
+})
 
 d <- as.data.frame(readxl::read_excel("data/raw/MPA_journal_data_with_choice_for_CalPolyFA2026.xlsx", sheet = "Data"))
-d$community <- as.integer(d$survey_type == 2)
 base <- c("fish_catch", "coral_coverage", "coastal_conditions", "contribution", "ASC")
 inter <- paste0(base, "_comm")
+
+# Row order as in the team's code: by choice set, status quo last.
+d <- d[order(d$Cid, -d$ASC, d$record_iidd), ]
+d$alt <- ave(d$Cid, d$Cid, FUN = seq_along)
+stopifnot(all(d$alt == d$Alt), all(tapply(d$Choice, d$Cid, sum) == 1))
+d$choice <- as.logical(d$Choice)
+d$community <- as.numeric(d$survey_type == 2)
 for (i in seq_along(base)) d[[inter[i]]] <- d[[base[i]]] * d$community
+md <- dfidx(d[, c("Cid", "record_id", "alt", "choice", base, inter)],
+            idx = list(c("Cid", "record_id"), "alt"))
 
-md1 <- prepare_data(d, base)
-md2 <- prepare_data(d, c(base, inter))
+f1 <- as.formula(paste("choice ~", paste(base, collapse = " + "), "| -1"))
+f2 <- as.formula(paste("choice ~", paste(c(base, inter), collapse = " + "), "| -1"))
+rpar1 <- setNames(rep("n", 5), base)
+rpar2 <- setNames(rep("n", 10), c(base, inter))
+n_draws <- 500
 
-m0 <- fit_mnl(md1)
-cat("Fixed-coefficient logit log-likelihood:", round(m0$loglik, 3), "\n")
-m1 <- fit_mxl(md1, c(m0$coef, abs(m0$coef) / 2))
-cat("Model 1 log-likelihood:", round(m1$loglik, 3), "\n")
-b1 <- m1$coef
-m2 <- fit_mxl(md2, c(b1[1:5], rep(0, 5), abs(b1[6:10]), abs(b1[6:10]) / 2))
-cat("Model 2 log-likelihood:", round(m2$loglik, 3), "\n")
-stopifnot(m1$loglik >= m0$loglik, m2$loglik >= m1$loglik,
-          m1$hessian_positive_definite, m2$hessian_positive_definite)
+m0 <- mlogit(f1, data = md)
+b0 <- coef(m0)
+cat("Fixed-coefficient logit log-likelihood:", round(as.numeric(logLik(m0)), 3), "\n")
+m1 <- mlogit(f1, data = md, rpar = rpar1, R = n_draws, halton = NA, panel = TRUE,
+             start = c(b0, abs(b0) / 2))
+cat("Model 1 log-likelihood:", round(as.numeric(logLik(m1)), 3), "\n")
+b1 <- coef(m1)
+sds1 <- abs(b1[6:10])
+m2 <- mlogit(f2, data = md, rpar = rpar2, R = n_draws, halton = NA, panel = TRUE,
+             start = c(b1[1:5], rep(0, 5), sds1, sds1 / 2))
+cat("Model 2 log-likelihood:", round(as.numeric(logLik(m2)), 3), "\n")
+# Each model nests the one before it, so a lower log-likelihood means the optimizer stalled.
+stopifnot(as.numeric(logLik(m1)) >= as.numeric(logLik(m0)) - 1e-6,
+          as.numeric(logLik(m2)) >= as.numeric(logLik(m1)) - 1e-6)
 
 stars <- function(p) ifelse(p < 0.01, "***", ifelse(p < 0.05, "**", ifelse(p < 0.10, "*", "")))
 
@@ -48,23 +68,24 @@ paper3 <- data.frame(
   paper_sig = c("**", "***", "***", "***", "***", "", "***", "", "***", "***", "", "**", "*", "**", ""))
 
 coef_table <- function(m, label) {
-  se <- sqrt(diag(m$vcov))
-  p <- 2 * pnorm(-abs(m$coef / se))
-  data.frame(model = label, term = names(m$coef), estimate = unname(m$coef), std_err = unname(se),
-             z = unname(m$coef / se), p_value = unname(p), sig = stars(unname(p)))
+  b <- coef(m)
+  se <- sqrt(diag(vcov(m)))
+  p <- 2 * pnorm(-abs(b / se))
+  data.frame(model = label, term = names(b), estimate = unname(b), std_err = unname(se),
+             z = unname(b / se), p_value = unname(p), sig = stars(unname(p)))
 }
 t3 <- rbind(coef_table(m1, "Model 1"), coef_table(m2, "Model 2"))
 t3 <- merge(t3, paper3, by = c("model", "term"), all.x = TRUE, sort = FALSE)
-t3 <- t3[order(t3$model, match(t3$term, c(names(m2$coef)))), ]
+t3 <- t3[order(t3$model, match(t3$term, names(coef(m2)))), ]
 write.csv(t3, "outputs/table3_coefficients.csv", row.names = FALSE)
 
 wtp <- function(m, num, den) {
-  b <- m$coef
+  b <- coef(m)
   a <- sum(b[num]); c <- sum(b[den])
   g <- setNames(numeric(length(b)), names(b))
   g[num] <- -1 / c
   g[den] <- g[den] + a / c^2
-  c(est = -a / c, se = sqrt(drop(t(g) %*% m$vcov %*% g)))
+  c(est = -a / c, se = sqrt(drop(t(g) %*% vcov(m) %*% g)))
 }
 # Shah et al. (2019) Table 4: published WTP and standard errors.
 paper4 <- list(
@@ -92,13 +113,14 @@ write.csv(t4, "outputs/table4_wtp.csv", row.names = FALSE)
 
 summ <- data.frame(
   item = c("respondents", "choice_occasions", "halton_draws", "loglik_fixed_logit", "loglik_model1", "loglik_model2",
-           "optimizer_rounds_model1", "optimizer_rounds_model2", "max_scaled_gradient_model1",
-           "max_scaled_gradient_model2", "hessian_positive_definite_model1", "hessian_positive_definite_model2"),
-  value = c(md1$n_panels, md1$n_sets, m1$n_draws, m0$loglik, m1$loglik, m2$loglik, m1$rounds, m2$rounds,
-            signif(m1$max_abs_scaled_gradient, 3), signif(m2$max_abs_scaled_gradient, 3),
-            m1$hessian_positive_definite, m2$hessian_positive_definite))
+           "iterations_model1", "iterations_model2", "gradient_criterion_model1", "gradient_criterion_model2"),
+  value = c(length(unique(d$record_id)), length(unique(d$Cid)), n_draws, as.numeric(logLik(m0)),
+            as.numeric(logLik(m1)), as.numeric(logLik(m2)), m1$est.stat$nb.iter, m2$est.stat$nb.iter,
+            signif(m1$est.stat$eps, 3), signif(m2$est.stat$eps, 3)))
 write.csv(summ, "outputs/model_summary.csv", row.names = FALSE)
 
+print(summary(m1))
+print(summary(m2))
 num <- vapply(t3, is.numeric, logical(1))
 t3p <- t3; t3p[num] <- lapply(t3p[num], round, 4)
 print(t3p, row.names = FALSE)
