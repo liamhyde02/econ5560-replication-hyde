@@ -1,5 +1,4 @@
-__pycache__/
-*.py[cod]
-.venv/
-venv/
+.Rhistory
+.RData
+.Rproj.user/
 .DS_Store

@@ -1,5 +1,0 @@
-group,codes_used,n,mean
-National (top-down),1-6 (as in paper),422,3.6303
-National (top-down),1-5 (code 6 = no answer dropped),350,3.1429
-Community (bottom-up),1-6 (as in paper),402,3.7015
-Community (bottom-up),1-5 (code 6 = no answer dropped),330,3.2

@@ -1,6 +1,0 @@
-numpy==2.5.3
-pandas==3.0.5
-scipy==1.18.1
-openpyxl==3.1.5
-xlogit==0.2.7
-matplotlib==3.11.2
