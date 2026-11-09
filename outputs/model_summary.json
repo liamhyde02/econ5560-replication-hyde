@@ -1,0 +1,20 @@
+{
+  "data": "MPA_journal_data_with_choice_for_CalPolyFA2026.xlsx",
+  "respondents": 824,
+  "choice_occasions": 4944,
+  "halton_draws": 500,
+  "loglik": {
+    "logit": -4632.831006649249,
+    "model1": -3126.406417486902,
+    "model2": -3119.212329466488
+  },
+  "converged": {
+    "model1": true,
+    "model2": true
+  },
+  "software": {
+    "xlogit": "0.2.7",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5"
+  }
+}
