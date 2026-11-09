@@ -46,7 +46,9 @@ pip freeze > logs/requirements.txt
 
 ## Software and run time
 
-RUN_DETAILS
+The committed outputs and log come from a clean run on 2026-11-09: I cloned this repository into an empty folder, deleted `outputs/`, installed the packages into a new virtual environment, and ran the commands above. The full run took RUNTIME seconds (almost all of it the two mixed logit models) on a 4-core Linux machine.
+
+From the session info at the end of `logs/run_log.txt`: Python 3.13.18 on Linux (x86_64, glibc 2.39), numpy 2.5.3, pandas 3.0.5, scipy 1.18.1, openpyxl 3.1.5, xlogit 0.2.7, matplotlib 3.11.2. The full package list is in `logs/requirements.txt`.
 
 ## What did and did not reproduce
 
