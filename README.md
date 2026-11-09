@@ -41,7 +41,9 @@ Rscript run_all.R > logs/run_log.txt 2>&1
 
 ## Software and run time
 
-RUN_DETAILS
+The committed outputs and log come from a clean run on 2026-11-09: I cloned this repository from GitHub into an empty folder, deleted `outputs/`, and ran the command above. The full run took 403 seconds (about 6.7 minutes; nearly all of it the two mixed logit models) on a 4-core Linux machine.
+
+From `sessionInfo()` at the end of `logs/run_log.txt`: R 4.3.3 on Ubuntu 24.04.5 LTS (x86_64), with haven 2.5.4 and readxl 1.4.3. Everything else is base R (stats, graphics, grDevices, utils, tools).
 
 ## What did and did not reproduce
 

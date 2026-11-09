@@ -1,0 +1,13 @@
+"item","value"
+"respondents",824
+"choice_occasions",4944
+"halton_draws",500
+"loglik_fixed_logit",-4632.83100664796
+"loglik_model1",-3124.71814052337
+"loglik_model2",-3119.19793651759
+"optimizer_rounds_model1",2
+"optimizer_rounds_model2",3
+"max_scaled_gradient_model1",0.000116
+"max_scaled_gradient_model2",4.23e-06
+"hessian_positive_definite_model1",1
+"hessian_positive_definite_model2",1
